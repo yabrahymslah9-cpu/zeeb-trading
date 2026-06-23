@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wolf Signals Terminal - منصة إشارات الذئب</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wolfDark: '#0D0E12',
+                        wolfCard: '#15171E',
+                        wolfOrange: '#FF6B00',
+                        wolfGreen: '#00E676',
+                        wolfRed: '#FF3D00',
+                        wolfGray: '#8E929F',
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        grotesk: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Space Grotesk', sans-serif;
+            background-color: #0D0E12;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        /* Custom Glowing Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0D0E12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6B00;
+            border-radius: 3px;
+        }
+        .glow-orange {
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+        .glow-green {
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+        .glow-red {
+            box-shadow: 0 0 15px rgba(255, 61, 0, 0.4);
+        }
+        /* Grid background effect */
+        .bg-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-white min-h-screen relative bg-grid">
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-gray-800 bg-wolfCard/90 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Brand / Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-wolfOrange rounded-xl flex items-center justify-center glow-orange overflow-hidden">
+                    <i class="fa-solid fa-wolf-pack-battalion text-white text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-wider text-wolfOrange font-grotesk flex items-center gap-2">
+                        WOLF SIGNALS <span class="bg-red-600 text-[10px] px-2 py-0.5 rounded text-white font-mono animate-pulse">LIVE</span>
+                    </h1>
+                    <p class="text-[10px] text-wolfGray" id="nav-subtitle">منصة الذكاء والتحليل الفني لتداول الخيارات الثنائية والبورصة</p>
+                </div>
+            </div>
+
+            <!-- Toolbar Buttons -->
+            <div class="flex items-center gap-4">
+                <!-- Quotex Status -->
+                <div class="hidden md:flex items-center gap-2 bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-lg text-xs text-wolfGreen">
+                    <span class="w-2 h-2 rounded-full bg-wolfGreen animate-ping"></span>
+                    <span id="quotex-status">متصل بمنصة كيوتكس Quotex المباشرة</span>
+                </div>
+
+                <!-- Admin Panel Button -->
+                <button onclick="openAdminModal()" class="bg-gray-800 hover:bg-red-500/20 hover:text-red-400 transition border border-gray-700 font-bold text-sm px-3 py-1.5 rounded-lg flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-red-500"></i>
+                    <span id="admin-btn-text">لوحة التحكم ⚙️</span>
+                </button>
+
+                <!-- Language Toggler -->
+                <button onclick="toggleLanguage()" class="bg-gray-800 hover:bg-wolfOrange/20 hover:text-wolfOrange transition border border-gray-700 font-bold text-sm px-3 py-1.5 rounded-lg flex items-center gap-2">
+                    <i class="fa-solid fa-globe"></i>
+                    <span id="lang-text">English</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto p-4 md:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 pb-24">
+
+        <!-- LEFT COLUMN / 7 COLS: Signal Generator and Radical Streaming Logs -->
+        <section class="lg:col-span-8 space-y-6">
+            
+            <!-- Signal Generator Dashboard -->
+            <div class="bg-wolfCard border border-gray-800 rounded-2xl overflow-hidden shadow-2xl relative">
+                <!-- Header of Card -->
+                <div class="p-4 bg-gradient-to-r from-gray-900 to-wolfCard border-b border-gray-800 flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-bolt text-wolfOrange text-xl"></i>
+                        <h2 class="font-bold text-base md:text-lg" id="card-generator-title">رادار إشارات الراديكالية الشرسة</h2>
+                    </div>
+                    <div class="text-xs bg-wolfOrange/10 border border-wolfOrange/30 text-wolfOrange px-2.5 py-1 rounded-full font-bold" id="algorithm-version">
+                        Wolf Engine v4.8
+                    </div>
+                </div>
+
+                <!-- Core Generator Interface -->
+                <div class="p-6 space-y-6">
+
+                    <!-- Activation Key Section -->
+                    <div id="activation-card" class="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 md:p-5 space-y-3 shadow-inner">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span id="activation-dot" class="w-2.5 h-2.5 rounded-full bg-wolfRed animate-pulse shadow-md"></span>
+                                <span id="activation-status-title" class="text-xs font-black text-wolfGray">المحطة غير منشطة - الرجاء التنشيط لتوليد الصفقات</span>
+                            </div>
+                            <!-- Counter Badge -->
+                            <div>
+                                <span id="activation-counter-badge" class="bg-wolfRed/10 border border-wolfRed/30 text-wolfRed text-[10px] px-2.5 py-1 rounded-full font-bold">
+                                    المتبقي: 0 صفقات
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Form Input row -->
+                        <div id="activation-form" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 mt-2">
+                            <input id="activation-input" type="text" placeholder="أدخل مفتاح التنشيط هنا..." class="flex-1 bg-black/50 border border-gray-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-wolfGray font-mono tracking-widest focus:outline-none focus:border-wolfOrange text-center uppercase" />
+                            <button onclick="activateTerminal()" class="bg-gradient-to-r from-wolfOrange to-orange-500 hover:from-orange-500 hover:to-wolfOrange text-white font-extrabold text-xs px-5 py-2.5 rounded-xl transition duration-200 shadow glow-orange whitespace-nowrap">
+                                <i class="fa-solid fa-key me-1"></i> تنشيط المحطة
+                            </button>
+                        </div>
+
+                        <!-- Success/Warning message status holding when active -->
+                        <div id="activation-active-details" class="hidden space-y-3">
+                            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-gray-950/40 border border-gray-850 rounded-xl p-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] text-wolfGray font-semibold" id="lbl-active-key">المفتاح النشط:</span>
+                                    <span id="active-key-display" class="font-mono bg-wolfOrange/10 border border-wolfOrange/25 rounded px-2.5 py-1 text-[10px] uppercase font-bold text-wolfOrange">WOLF-XXXX-XXXX</span>
+                                </div>
+                                <button onclick="deactivateTerminal()" class="text-[11px] text-red-400 hover:text-white transition flex items-center justify-center gap-1.5 font-bold hover:underline">
+                                    <i class="fa-solid fa-right-from-bracket"></i> <span id="btn-deactivate-lbl">تغيير المفتاح</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Available State -->
+                            <div id="active-state-available" class="hidden text-xs flex justify-between items-center text-wolfGreen bg-wolfGreen/5 border border-wolfGreen/10 rounded-xl p-3.5">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check text-sm animate-pulse"></i>
+                                    <span id="activation-active-message" class="font-bold text-[11px]">تم تنشيط المفتاح بنجاح! متاح 7 صفقات اليوم.</span>
+                                </span>
+                            </div>
+                            
+                            <!-- Locked State / Countdown -->
+                            <div id="active-state-locked" class="hidden text-xs flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 text-wolfRed bg-red-950/10 border border-red-900/20 rounded-xl p-3.5">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-clock-rotate-left text-sm animate-spin-slow"></i>
+                                    <span class="font-bold text-[11px]" id="activation-locked-message">انتهى الحد اليومي (0/7 صفقات). يتجدد تلقائياً بعد:</span>
+                                </div>
+                                <div class="font-mono text-center font-black bg-red-950/40 text-red-500 border border-red-900/40 px-3 py-1 rounded-lg text-xs" id="reset-countdown">
+                                    --:--:--
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdowns / Configuration Row -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <!-- Pair Selection -->
+                        <div class="space-y-2">
+                            <label class="text-xs text-wolfGray font-semibold" id="label-select-pair">اختر زوج العملات:</label>
+                            <div class="relative">
+                                <select id="pair-select" onchange="onPairChange()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-wolfOrange appearance-none font-grotesk font-bold">
+                                    <option value="EUR/USD" class="text-white">EUR/USD 📈</option>
+                                    <option value="GBP/USD" class="text-white">GBP/USD 📈</option>
+                                    <option value="USD/JPY" class="text-white">USD/JPY 📈</option>
+                                    <option value="EUR/GBP" class="text-white">EUR/GBP 📈</option>
+                                    <option value="USD/CHF" class="text-white">USD/CHF 📈</option>
+                                    <option value="AUD/USD" class="text-white">AUD/USD 📈</option>
+                                    <option value="NZD/USD" class="text-white">NZD/USD 📈</option>
+                                    <option value="EUR/USD OTC" class="text-cyan-400">EUR/USD OTC 🕰️</option>
+                                    <option value="GBP/USD OTC" class="text-cyan-400">GBP/USD OTC 🕰️</option>
+                                    <option value="USD/JPY OTC" class="text-cyan-400">USD/JPY OTC 🕰️</option>
+                                    <option value="EUR/GBP OTC" class="text-cyan-400">EUR/GBP OTC 🕰️</option>
+                                    <option value="USD/CHF OTC" class="text-cyan-400">USD/CHF OTC 🕰️</option>
+                                    <option value="AUD/USD OTC" class="text-cyan-400">AUD/USD OTC 🕰️</option>
+                                    <option value="NZD/USD OTC" class="text-cyan-400">NZD/USD OTC 🕰️</option>
+                                    <option value="XAU/USD" class="text-amber-400">XAU/USD (Gold) ✨</option>
+                                    <option value="BTC/USD" class="text-orange-400">BTC/USD (Bitcoin) 🪙</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center pr-2 text-wolfGray">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeframe Selection -->
+                        <div class="space-y-2">
+                            <label class="text-xs text-wolfGray font-semibold" id="label-select-timeframe">فترة الشموع:</label>
+                            <div class="relative">
+                                <select id="timeframe-select" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-wolfOrange appearance-none font-bold">
+                                    <option value="1M">M1 - دقيقة واحدة</option>
+                                    <option value="5M" selected>M5 - 5 دقائق</option>
+                                    <option value="15M">M15 - 15 دقيقة</option>
+                                    <option value="30M">M30 - 30 دقيقة</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center pr-2 text-wolfGray">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scan Strategy Selection -->
+                        <div class="col-span-2 sm:col-span-1 space-y-2">
+                            <label class="text-xs text-wolfGray font-semibold" id="label-select-strategy">إستراتيجية التحليل:</label>
+                            <div class="relative">
+                                <select id="strategy-select" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-wolfOrange appearance-none font-bold">
+                                    <option value="radical">Wolf Radical 🐺</option>
+                                    <option value="scalping">Super Scalper ⚡</option>
+                                    <option value="reversal">RSI Reversal 🔄</option>
+                                    <option value="breakout">Bollinger Breakout 💥</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 left-3 flex items-center pr-2 text-wolfGray">
+                                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button onclick="generateSignal()" id="btn-generate" class="w-full py-4 bg-gradient-to-r from-wolfOrange to-orange-500 hover:from-orange-500 hover:to-wolfOrange text-white rounded-2xl font-black text-base transition duration-300 shadow-lg glow-orange flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-eye-low-vision text-lg animate-bounce"></i>
+                        <span id="text-generate-signal">فحص السوق وتوليد إشارة الذئب الشرسة</span>
+                    </button>
+
+                    <!-- Loading / Analyzer Overlay State (Dynamic) -->
+                    <div id="loading-state" class="hidden bg-gray-900/90 border border-wolfOrange/40 rounded-2xl p-6 flex-col items-center justify-center text-center space-y-4 py-12 glow-orange">
+                        <div class="relative w-20 h-20">
+                            <div class="absolute inset-0 border-4 border-gray-800 rounded-full"></div>
+                            <div class="absolute inset-0 border-4 border-t-wolfOrange rounded-full animate-spin"></div>
+                            <div class="absolute inset-0 flex items-center justify-center text-wolfOrange text-2xl">
+                                <i class="fa-solid fa-skull-crossbones animate-pulse"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-wolfOrange animate-pulse" id="loading-title">جاري فحص الخرائط وجداول السيولة لقوت الشموع...</h3>
+                            <p class="text-xs text-wolfGray mt-1" id="loading-desc">الخوارزمية تشفر البيانات المباشرة وتقارنها بخوادم Quotex لمنع التوهان السعري</p>
+                        </div>
+                        <div class="w-full max-w-xs bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                            <div id="progress-bar-fill" class="bg-wolfOrange h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- Result Panel (Active Signal Box) -->
+                    <div id="signal-box" class="bg-gradient-to-b from-gray-900 to-wolfCard border border-gray-800 rounded-2xl p-5 md:p-6 space-y-6 relative overflow-hidden">
+                        
+                        <!-- Top details representing Pair & Quotex tag -->
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div id="signal-badge-glow" class="w-10 h-10 rounded-xl bg-wolfOrange/10 border border-wolfOrange/30 text-wolfOrange flex items-center justify-center font-black glow-orange uppercase text-md font-grotesk tracking-wider">
+                                    EUR/USD
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-black text-lg font-grotesk" id="signal-pair-name">EUR/USD OTC</h3>
+                                        <span id="otc-alert-badge" class="bg-cyan-950/40 border border-cyan-800/80 text-cyan-400 text-[10px] px-2 py-0.5 rounded font-black font-mono">OTC 🕰️</span>
+                                    </div>
+                                    <div class="text-[11px] text-wolfGray" id="curr-timeframe-label">فريم التحليل: M5</div>
+                                </div>
+                            </div>
+                            <!-- Quotex Verification -->
+                            <div id="verified-badge-container" class="bg-cyan-950/40 border border-cyan-800/60 text-cyan-400 px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-circle-check text-sm"></i>
+                                <span id="verified-badge-text">كيوتكس OTC 🕰️</span>
+                            </div>
+                        </div>
+
+                        <!-- Core direction indicator (Buy or Sell) -->
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                            <!-- Gauge Call/Put / Arrow -->
+                            <div class="md:col-span-8 flex items-center gap-5 bg-black/40 border border-gray-800/80 rounded-2xl p-4 relative overflow-hidden">
+                                <div id="direction-arrow-bg" class="w-16 h-16 rounded-xl bg-wolfGreen/10 border border-wolfGreen/30 text-wolfGreen flex items-center justify-center glow-green">
+                                    <i id="direction-arrow-icon" class="fa-solid fa-arrow-trend-up text-3xl animate-bounce"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-[11px] text-wolfGray block uppercase font-bold" id="label-reco">الاتجاه الموصى به</span>
+                                    <span id="direction-lbl" class="text-2xl md:text-3xl font-black text-wolfGreen tracking-wider font-cairo block">صعود (CALL)</span>
+                                    <span id="direction-time-lbl" class="text-xs text-wolfGray block mt-0.5" id="label-expire-time">انتهاء الصفقة بعد 5 دقائق بالضبط</span>
+                                </div>
+                                <!-- Signal Strength Indicator -->
+                                <div class="text-right border-r border-gray-800 pr-4">
+                                    <span class="text-[10px] text-wolfGray block font-bold" id="label-strength">قوة الإشارة</span>
+                                    <span id="strength-percentage" class="text-xl md:text-2xl font-black font-grotesk text-wolfGreen">96%</span>
+                                    <span class="text-[9px] text-wolfGray font-semibold px-1 rounded bg-wolfGreen/15 text-wolfGreen border border-wolfGreen/20" id="strength-lbl">عالية جداً</span>
+                                </div>
+                            </div>
+
+                            <!-- Target/Entry/Exit Rates -->
+                            <div class="md:col-span-4 space-y-3">
+                                <div class="bg-gray-900 border border-gray-800/60 rounded-xl p-3 flex justify-between items-center">
+                                    <div class="text-xs text-wolfGray" id="lbl-entry-price">سعر الدخول:</div>
+                                    <div id="entry-price-val" class="font-mono text-white text-sm font-bold tracking-wider">1.08542</div>
+                                </div>
+                                <div class="bg-gray-900 border border-gray-800/60 rounded-xl p-3 flex justify-between items-center">
+                                    <div class="text-xs text-wolfGray" id="lbl-exit-price">الهدف (TP):</div>
+                                    <div id="exit-price-val" class="font-mono text-wolfGreen text-sm font-bold tracking-wider">1.08595</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Indicators details subgrid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-gray-900/60 border border-gray-800/50 p-3 rounded-xl text-center space-y-1">
+                                <span class="text-[10px] text-wolfGray block" id="ti-rsi">مؤشر RSI (14)</span>
+                                <span id="rsi-val" class="text-xs font-mono font-bold text-wolfGreen">شراء مفرط (32.4)</span>
+                            </div>
+                            <div class="bg-gray-900/60 border border-gray-800/50 p-3 rounded-xl text-center space-y-1">
+                                <span class="text-[10px] text-wolfGray block" id="ti-macd">مؤشر MACD</span>
+                                <span id="macd-val" class="text-xs font-mono font-bold text-wolfGreen">تقاطع إيجابي صاعد</span>
+                            </div>
+                            <div class="bg-gray-900/60 border border-gray-800/50 p-3 rounded-xl text-center space-y-1">
+                                <span class="text-[10px] text-wolfGray block" id="ti-bollinger">نطاقات بولينجر</span>
+                                <span id="bollinger-val" class="text-xs font-mono font-bold text-white">ارتداد من الأسفل</span>
+                            </div>
+                            <div class="bg-gray-900/60 border border-gray-800/50 p-3 rounded-xl text-center space-y-1">
+                                <span class="text-[10px] text-wolfGray block" id="ti-sar">مؤشر Parabolic SAR</span>
+                                <span id="sar-val" class="text-xs font-mono font-bold text-wolfGreen">داعم للاتجاه</span>
+                            </div>
+                        </div>
+
+                        <!-- Disclaimer and notice bottom panel -->
+                        <div class="p-3 bg-gray-900/40 border border-gray-800/50 rounded-xl flex items-start gap-2 text-xs">
+                            <span class="text-wolfOrange mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                            <p class="text-[10px] text-wolfGray leading-relaxed" id="disclaimer-text">
+                                ✨ سعر الدخول مطابق تماماً لنفس اللحظة لأسعار كيوتكس OTC لضمان الدقة وتفادي الانحراف سعرياً. تأكد من فتح الصفقة فور صدور الإشارة لضمان النسبة.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Radical Stream Algorithm Sandbox Logs -->
+            <div class="bg-wolfCard border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                <!-- Header -->
+                <div class="p-4 bg-gradient-to-r from-gray-900 to-wolfCard border-b border-gray-800 flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-terminal text-wolfOrange"></i>
+                        <h2 class="font-bold text-xs md:text-sm text-white" id="log-console-title">سجل خوارزمية الراديكال المباشر (Terminal)</h2>
+                    </div>
+                    <!-- Console indicators -->
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-wolfGreen animate-pulse"></span>
+                        <span class="text-[10px] text-wolfGray font-mono font-bold">RADICAL v1.94 SECURE FEED</span>
+                    </div>
+                </div>
+                <!-- Log Content Area -->
+                <div class="p-4 bg-black/90 font-mono text-[11px] text-emerald-400 h-64 overflow-y-auto space-y-2 rounded-b-2xl" id="log-console-body">
+                    <div class="text-wolfGray">[22:38:12] Initializing radical wolf terminal logs...</div>
+                    <div class="text-wolfGray">[22:38:13] Connecting with primary price sync sockets for Quotex...</div>
+                    <div class="text-wolfOrange">[22:38:14] System ready. Press "Fractions Analysis" to trigger live checks.</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- RIGHT COLUMN / 4 COLS: Markets & Live Rates Dashboard -->
+        <section class="lg:col-span-4 space-y-6">
+
+            <!-- Markets Price Screen panel -->
+            <div class="bg-wolfCard border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                <!-- Header of dashboard -->
+                <div class="p-4 bg-gradient-to-r from-gray-900 to-wolfCard border-b border-gray-800 flex justify-between items-center">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-chart-line text-wolfOrange text-md"></i>
+                        <h2 class="font-bold text-sm" id="box-markets-title">لوحة مراقبة الأسواق والعملات</h2>
+                    </div>
+                    <span class="bg-emerald-950/40 border border-emerald-800/60 text-wolfGreen text-[10px] px-2 py-0.5 rounded font-bold font-mono animate-ping">LIVE</span>
+                </div>
+
+                <!-- Market Category Filter Navigation Tabs -->
+                <div class="p-2 border-b border-gray-800 flex flex-nowrap overflow-x-auto gap-1">
+                    <button onclick="changeMarketCategory('ALL')" id="tab-ALL" class="text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap bg-wolfOrange text-white border border-wolfOrange/20 transition">الكل</button>
+                    <button onclick="changeMarketCategory('FOREX')" id="tab-FOREX" class="text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap text-wolfGray hover:bg-gray-900 transition">الفوركس</button>
+                    <button onclick="changeMarketCategory('OTC')" id="tab-OTC" class="text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap text-wolfGray hover:bg-gray-900 transition">OTC موازي 🕰️</button>
+                    <button onclick="changeMarketCategory('OTHER')" id="tab-OTHER" class="text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap text-wolfGray hover:bg-gray-900 transition">معادن/كريبتو</button>
+                </div>
+
+                <!-- Live Rates List Scrollable -->
+                <div class="p-3 divide-y divide-gray-800/60 max-h-[420px] overflow-y-auto" id="market-rates-container">
+                    <!-- Dynamic currency rows inject here -->
+                </div>
+            </div>
+
+            <!-- Trade Simulator Action Card -->
+            <div class="bg-wolfCard border border-gray-800 rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-16 -bottom-16 w-36 h-36 bg-wolfOrange/10 rounded-full blur-2xl"></div>
+                <div class="absolute -left-16 -top-16 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl"></div>
+
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-wolfOrange/15 text-wolfOrange flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <h3 class="font-extrabold text-xs" id="box-tip-title">منصة توصيات راديكالية احترافية</h3>
+                </div>
+
+                <p class="text-[11px] text-wolfGray leading-relaxed mb-4" id="box-tip-desc">
+                    تضمن لك منصة Wolf Signals دقة فائقة تخلو من التلاعب في عقود الخيارات الثنائية وخيار الـ OTC. اعتمد الإشارات فور صدورها على محاكيك لنتائج مثالية.
+                </p>
+
+                <!-- Statistics badges -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-xl text-center">
+                        <span class="text-[9px] text-wolfGray block" id="stat-signals-today">صفقات اليوم الممتازة:</span>
+                        <span class="text-xs font-black text-wolfGreen">142+/150</span>
+                    </div>
+                    <div class="bg-gray-900/60 border border-gray-800 p-2.5 rounded-xl text-center">
+                        <span class="text-[9px] text-wolfGray block" id="stat-winrate">معدل الفوز التراكمي:</span>
+                        <span class="text-xs font-black text-wolfOrange font-grotesk">94.8%</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer of Page -->
+    <footer class="border-t border-gray-800 bg-wolfCard/50 py-6 px-4 text-center text-xs text-wolfGray">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p id="footer-text">© 2026 Wolf Signals Terminal - جميع الحقوق محفوظة لعملائنا المتداولين المحترفين.</p>
+            <p class="text-[10px] text-red-500 font-semibold" id="footer-disclaimer">تحذير المخاطر: تداول المشتقات وعقود الفروقات يحمل في طياته درجات عالية من المخاطرة برأسمالك.</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic Block -->
+    <script>
+        // Language dictionaries
+        const translations = {
+            ar: {
+                navSubtitle: "منصة الذكاء والتحليل الفني لتداول الخيارات الثنائية والبورصة",
+                quotexStatus: "الأسعار مأخوذة مباشرة من منصة التحليل العالمية TradingView 📈",
+                btnLang: "English",
+                cardTitle: "رادار إشارات الراديكالية الشرسة",
+                lblPair: "اختر زوج العملات:",
+                lblTime: "فترة الشموع:",
+                lblStrat: "إستراتيجية التحليل:",
+                btnGenerateSignal: "فحص السوق وتوليد إشارة الذئب الشرسة",
+                loadingTitle: "جاري فحص الخرائط وجداول السيولة لقوت الشموع...",
+                loadingDesc: "الخوارزمية تشفر البيانات المباشرة وتقارنها بخوادم TradingView لمنع التوهان السعري",
+                lblReco: "الاتجاه الموصى به",
+                lblEntryPrice: "سعر الدخول:",
+                lblExitPrice: "الهدف (TP):",
+                tiRsi: "مؤشر RSI (14)",
+                tiMacd: "مؤشر MACD",
+                tiBollinger: "نطاقات بولينجر",
+                tiSar: "مؤشر Parabolic SAR",
+                disclaimer: "✨ سعر الدخول مطابق تماماً لنفس اللحظة لأسعار TradingView لضمان أقصى درجات الدقة وتفادي الانحراف سعرياً. تأكد من فتح الصفقة فور صدور الإشارة لضمان النسبة.",
+                all: "الكل",
+                forex: "الفوركس",
+                otc: "سوق موازي OTC 🕰️",
+                other: "معادن/كريبتو",
+                marketsTitle: "لوحة مراقبة الأسواق والعملات",
+                tipTitle: "منصة توصيات راديكالية احترافية",
+                tipDesc: "تضمن لك منصة Wolf Signals دقة فائقة تخلو من التلاعب في عقود الخيارات الثنائية وخيار الـ OTC. اعتمد الإشارات فور صدورها على محاكيك لنتائج مثالية.",
+                statSignals: "صفقات اليوم الممتازة:",
+                statWinrate: "معدل الفوز التراكمي:",
+                footertext: "© 2026 Wolf Signals Terminal - جميع الحقوق محفوظة لعملائنا المتداولين المحترفين.",
+                footerdisclaimer: "تحذير المخاطر: تداول المشتقات وعقود الفروقات يحمل في طياته درجات عالية من المخاطرة برأسمالك.",
+                buy: "صعود (CALL)",
+                sell: "هبوط (PUT)",
+                expireText: "انتهاء الصفقة بعد 5 دقائق بالضبط",
+                strengthVeryHigh: "عالية جداً",
+                strengthRegular: "قوية",
+                bullishCross: "تقاطع إيجابي صاعد",
+                bearishCross: "تقاطع سلبي هابط",
+                overbought: "شراء مفرط",
+                oversold: "بيع مفرط",
+                neutral: "محايد",
+                bounceBottom: "ارتداد من الأسفل",
+                breakoutTop: "اختراق المقاومة",
+                supportTrend: "داعم للاتجاه",
+                terminalReady: "النظام مستعد. اضغط على توليد الإشارة لبث الفحص الفني.",
+                adminBtnText: "لوحة التحكم ⚙️",
+                activationLockedTitle: "المحطة غير منشطة - الرجاء التنشيط لتوليد الصفقات",
+                activationActiveTitle: "البث منشط - حالة التراخيص سليمة ومباشرة",
+                activationRemaining: "المتبقي: {x} صفقات لليوم",
+                activationPlaceholder: "أدخل مفتاح التنشيط هنا...",
+                activationSubmit: "تنشيط المحطة",
+                activationSuccessAlert: "تم التنشيط بنجاح! مسموح بتوليد {x} صفقات كل 24 ساعة.",
+                activationExpiredTitle: "انتهى الحد اليومي - يتجدد تلقائياً كل 24 ساعة",
+                adminModalTitle: "لوحة الإدارة وتوليد المفاتيح (TURKI2000)",
+                authTitle: "منطقة محمية - التحقق من المدير المسؤول",
+                authDesc: "يرجى إدخال رمز المرور لتوليد مفاتيح تنشيط جديدة وإدارة التراخيص",
+                adminPassPlaceholder: "أدخل كلمة مرور الإدارة...",
+                panelActionsLbl: "التحكم في تراخيص الأجهزة المربوطة:",
+                panelKeysListLbl: "قائمة مفاتيح التنشيط المصدرة ومعدلات التبقي:",
+                panelClearLbl: "مسح السجل بالكامل"
+            },
+            en: {
+                navSubtitle: "Advanced Technical Analytics & Signals Terminal for Binary Options",
+                quotexStatus: "Terminal linked with live TradingView values",
+                btnLang: "العربية",
+                cardTitle: "Aggressive Wolf Radical Radar Engine",
+                lblPair: "Select Currency Pair:",
+                lblTime: "Candlestick Frame:",
+                lblStrat: "Analysis Strategy:",
+                btnGenerateSignal: "Scan Markets & Generate Aggressive Signal",
+                loadingTitle: "Scanning charts and dynamic liquidity order books...",
+                loadingDesc: "Decrypting real-time market feeds & comparing with TradingView server pipelines",
+                lblReco: "RECOMMENDED DIRECTION",
+                lblEntryPrice: "Entry Price:",
+                lblExitPrice: "Target (TP):",
+                tiRsi: "RSI Index (14)",
+                tiMacd: "MACD Multiplier",
+                tiBollinger: "Bollinger Bands",
+                tiSar: "Parabolic SAR Indicator",
+                disclaimer: "✨ Entry price aligns with TradingView feed to prevent price slippage. Ensure your sandbox entry occurs exactly when specified.",
+                all: "All",
+                forex: "Forex",
+                otc: "OTC Market 🕰️",
+                other: "Metals/Crypto",
+                marketsTitle: "Global Market Live Monitor",
+                tipTitle: "Wolf Algorithmic Engine Terminal",
+                tipDesc: "Our dynamic signal engine analyzes high-frequency order flows, protecting structural positions from simulated pricing slippage inside OTC platforms.",
+                statSignals: "Premium Signals Today:",
+                statWinrate: "Aggregated Success Rate:",
+                footertext: "© 2026 Wolf Signals Terminal - All rights reserved to premium enterprise trading clients.",
+                footerdisclaimer: "Risk Warning: High volatility instruments carry intrinsic capital risk.",
+                buy: "BUY (CALL)",
+                sell: "SELL (PUT)",
+                expireText: "Expiration set to exactly 5 Minutes",
+                strengthVeryHigh: "VERY STRONG",
+                strengthRegular: "STRONG",
+                bullishCross: "Golden Bullish Cross",
+                bearishCross: "Negative Bearish Cross",
+                overbought: "Overbought",
+                oversold: "Oversold",
+                neutral: "Neutral Balance",
+                bounceBottom: "Bounce off Lower Band",
+                breakoutTop: "Resistance Breakout",
+                supportTrend: "Trend Supportive",
+                terminalReady: "Terminal ready. Press generate signal to broadcast automated technical screening.",
+                adminBtnText: "Admin Console ⚙️",
+                activationLockedTitle: "Terminal Locked - Activation required to trade",
+                activationActiveTitle: "Terminal Active - Licensing status valid",
+                activationRemaining: "Remaining: {x} trades today",
+                activationPlaceholder: "Enter activation key...",
+                activationSubmit: "Activate",
+                activationSuccessAlert: "Activated successfully! Allowed to generate {x} trades every 24 hours.",
+                activationExpiredTitle: "Daily limit reached - Auto-resets in 24 hours",
+                adminModalTitle: "Admin Console & Key Generator (TURKI2000)",
+                authTitle: "Restricted Area - Verify Admin Credentials",
+                authDesc: "Please enter passcode to generate activation keys & manage licenses",
+                adminPassPlaceholder: "Enter admin passcode...",
+                panelActionsLbl: "Licensing & device management panel:",
+                panelKeysListLbl: "Issued activation keys and remaining limits:",
+                panelClearLbl: "Wipe license history"
+            }
+        };
+
+        let appLanguage = 'ar';
+        let activeCategory = 'ALL';
+
+        // Price rates mock database state
+        const marketRates = [
+            { id: 'EUR/USD', category: 'FOREX', rate: 1.08542, change: '+0.12%' },
+            { id: 'GBP/USD', category: 'FOREX', rate: 1.27425, change: '+0.08%' },
+            { id: 'USD/JPY', category: 'FOREX', rate: 158.324, change: '-0.14%' },
+            { id: 'EUR/GBP', category: 'FOREX', rate: 0.85176, change: '+0.03%' },
+            { id: 'USD/CHF', category: 'FOREX', rate: 0.89211, change: '+0.11%' },
+            { id: 'AUD/USD', category: 'FOREX', rate: 0.66540, change: '-0.18%' },
+            { id: 'NZD/USD', category: 'FOREX', rate: 0.61250, change: '-0.07%' },
+            { id: 'EUR/USD OTC', category: 'OTC', rate: 1.08630, change: '+0.21%' },
+            { id: 'GBP/USD OTC', category: 'OTC', rate: 1.27540, change: '+0.15%' },
+            { id: 'USD/JPY OTC', category: 'OTC', rate: 158.210, change: '-0.23%' },
+            { id: 'EUR/GBP OTC', category: 'OTC', rate: 0.85210, change: '+0.09%' },
+            { id: 'USD/CHF OTC', category: 'OTC', rate: 0.89140, change: '+0.04%' },
+            { id: 'AUD/USD OTC', category: 'OTC', rate: 0.66610, change: '-0.11%' },
+            { id: 'NZD/USD OTC', category: 'OTC', rate: 0.61310, change: '+0.05%' },
+            { id: 'XAU/USD', category: 'OTHER', rate: 2332.15, change: '+1.45%' },
+            { id: 'BTC/USD', category: 'OTHER', rate: 66432.8, change: '+2.88%' }
+        ];
+
+        // Active State of Current Signal
+        let currentActiveSignal = {
+            pair: "EUR/USD OTC",
+            direction: "BUY",
+            entryPrice: 1.08542,
+            exitPrice: 1.08595,
+            strength: 96,
+            rsi: "32.4 (Oversold)",
+            macd: "Bullish Cross",
+            bollinger: "Bounce off bottom",
+            sar: "Supportive"
+        };
+
+        // DOM Initializer
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeDefaultKeys();
+            renderMarkets();
+            updateUIVocabulary();
+            setupContinuousPriceFeeds();
+            addLogInit();
+            
+            // Periodically refresh activation status and countdowns every second
+            setInterval(() => {
+                updateActivationUIStatus();
+            }, 1000);
+        });
+
+        // Add Log to Terminal Console Helper
+        function addLog(text, colorClass = "text-emerald-400") {
+            const body = document.getElementById('log-console-body');
+            const now = new Date();
+            const timestamp = `[${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}]`;
+            
+            const row = document.createElement('div');
+            row.className = `${colorClass} mt-1 font-mono transition duration-200`;
+            row.innerText = `${timestamp} ${text}`;
+            
+            body.appendChild(row);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function addLogInit() {
+            addLog(translations[appLanguage].terminalReady, "text-wolfOrange");
+        }
+
+        // Toggle Lang Engine
+        function toggleLanguage() {
+            appLanguage = appLanguage === 'ar' ? 'en' : 'ar';
+            
+            // Toggle Dir Attributes
+            document.documentElement.dir = appLanguage === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = appLanguage;
+
+            updateUIVocabulary();
+            addLog(appLanguage === 'ar' ? "تم تبديل واجهة النظام للغة العربية" : "Environment terminal translated to English", "text-sky-400");
+        }
+
+        // Apply Language Pack updates to elements
+        function updateUIVocabulary() {
+            const pack = translations[appLanguage];
+
+            document.getElementById('nav-subtitle').innerText = pack.navSubtitle;
+            document.getElementById('quotex-status').innerText = pack.quotexStatus;
+            document.getElementById('lang-text').innerText = pack.btnLang;
+            document.getElementById('card-generator-title').innerText = pack.cardTitle;
+            document.getElementById('label-select-pair').innerText = pack.lblPair;
+            document.getElementById('label-select-timeframe').innerText = pack.lblTime;
+            document.getElementById('label-select-strategy').innerText = pack.lblStrat;
+            document.getElementById('text-generate-signal').innerText = pack.btnGenerateSignal;
+            document.getElementById('loading-title').innerText = pack.loadingTitle;
+            document.getElementById('loading-desc').innerText = pack.loadingDesc;
+            
+            document.getElementById('label-reco').innerText = pack.lblReco;
+            document.getElementById('lbl-entry-price').innerText = pack.lblEntryPrice;
+            document.getElementById('lbl-exit-price').innerText = pack.lblExitPrice;
+            
+            document.getElementById('ti-rsi').innerText = pack.tiRsi;
+            document.getElementById('ti-macd').innerText = pack.tiMacd;
+            document.getElementById('ti-bollinger').innerText = pack.tiBollinger;
+            document.getElementById('ti-sar').innerText = pack.tiSar;
+
+            document.getElementById('box-markets-title').innerText = pack.marketsTitle;
+            document.getElementById('box-tip-title').innerText = pack.tipTitle;
+            document.getElementById('box-tip-desc').innerText = pack.tipDesc;
+
+            document.getElementById('stat-signals-today').innerText = pack.statSignals;
+            document.getElementById('stat-winrate').innerText = pack.statWinrate;
+
+            document.getElementById('footer-text').innerText = pack.footertext;
+            document.getElementById('footer-disclaimer').innerText = pack.footerdisclaimer;
+
+            // Update Tab texts
+            document.getElementById('tab-ALL').innerText = pack.all;
+            document.getElementById('tab-FOREX').innerText = pack.forex;
+            document.getElementById('tab-OTC').innerText = pack.otc;
+            document.getElementById('tab-OTHER').innerText = pack.other;
+
+            // Update newly added licensing and admin panel interface labels
+            document.getElementById('admin-btn-text').innerText = pack.adminBtnText;
+            document.getElementById('admin-modal-title').innerText = pack.adminModalTitle;
+            document.getElementById('auth-title').innerText = pack.authTitle;
+            document.getElementById('auth-desc').innerText = pack.authDesc;
+            document.getElementById('admin-password-input').placeholder = pack.adminPassPlaceholder;
+            document.getElementById('panel-actions-lbl').innerText = pack.panelActionsLbl;
+            document.getElementById('panel-keys-list-lbl').innerText = pack.panelKeysListLbl;
+            document.getElementById('panel-clear-lbl').innerText = pack.panelClearLbl;
+
+            // Trigger active state sub-cards rendering updates
+            updateActivationUIStatus();
+
+            // Re-render components holding state values
+            refreshActiveSignalCard();
+        }
+
+        // Setup continuously ticking live price feeds simulating a websocket
+        function setupContinuousPriceFeeds() {
+            // Fetch live rates from Binance API (highly accurate, allows CORS in browser)
+            function syncWithLiveBinance() {
+                fetch('https://api.binance.com/api/v3/ticker/price')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (Array.isArray(data)) {
+                            // Find BTC
+                            const btc = data.find(t => t.symbol === "BTCUSDT");
+                            if (btc) {
+                                const r = marketRates.find(m => m.id === "BTC/USD");
+                                if (r) r.rate = parseFloat(btc.price);
+                            }
+                            // Find Gold (PAXGUSDT tracks gold physical beautifully)
+                            const paxg = data.find(t => t.symbol === "PAXGUSDT");
+                            if (paxg) {
+                                const r = marketRates.find(m => m.id === "XAU/USD");
+                                if (r) r.rate = parseFloat(paxg.price);
+                            }
+                        }
+                    })
+                    .catch(err => console.log("Binance Web Sync Failed", err));
+            }
+
+            // Fetch live forex base rates from open exchange rates API (allows CORS)
+            function syncWithLiveForex() {
+                fetch('https://open.er-api.com/v6/latest/USD')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.rates) {
+                            const rates = data.rates;
+                            const eur = rates.EUR;
+                            const gbp = rates.GBP;
+                            const jpy = rates.JPY;
+                            const chf = rates.CHF;
+                            const aud = rates.AUD;
+                            const nzd = rates.NZD;
+
+                            if (eur) {
+                                updateRate("EUR/USD", 1 / eur);
+                                updateRate("EUR/USD OTC", 1 / eur);
+                            }
+                            if (gbp) {
+                                updateRate("GBP/USD", 1 / gbp);
+                                updateRate("GBP/USD OTC", 1 / gbp);
+                            }
+                            if (jpy) {
+                                updateRate("USD/JPY", jpy);
+                                updateRate("USD/JPY OTC", jpy);
+                            }
+                            if (eur && gbp) {
+                                updateRate("EUR/GBP", gbp / eur);
+                                updateRate("EUR/GBP OTC", gbp / eur);
+                            }
+                            if (chf) {
+                                updateRate("USD/CHF", chf);
+                                updateRate("USD/CHF OTC", chf);
+                            }
+                            if (aud) {
+                                updateRate("AUD/USD", 1 / aud);
+                                updateRate("AUD/USD OTC", 1 / aud);
+                            }
+                            if (nzd) {
+                                updateRate("NZD/USD", 1 / nzd);
+                                updateRate("NZD/USD OTC", 1 / nzd);
+                            }
+                        }
+                    })
+                    .catch(err => console.log("Forex Web Sync Failed", err));
+            }
+
+            function updateRate(id, rateValue) {
+                const item = marketRates.find(m => m.id === id);
+                if (item) {
+                     item.rate = rateValue;
+                }
+            }
+
+            syncWithLiveBinance();
+            syncWithLiveForex();
+            setInterval(syncWithLiveBinance, 15000);
+            setInterval(syncWithLiveForex, 60000);
+
+            setInterval(() => {
+                marketRates.forEach(item => {
+                    // Slight price fluctuation
+                    const fluctuationRatio = (Math.random() - 0.5) * 0.0004;
+                    item.rate = item.rate * (1 + fluctuationRatio);
+                    
+                    // Assign random pos/neg changes
+                    const randomPct = (parseFloat(item.change) + (Math.random() - 0.5) * 0.05).toFixed(2);
+                    item.change = (randomPct >= 0 ? '+' : '') + randomPct + '%';
+                });
+
+                // Update live values in lists
+                renderMarkets();
+                
+                // If the dynamic rates align with selected signal pair, update live target
+                const activePair = currentActiveSignal.pair;
+                const matchObj = marketRates.find(m => m.id === activePair);
+                if (matchObj) {
+                    const diffScale = activePair.includes("OTC") ? 0.00015 : 0.00010;
+                    document.getElementById('entry-price-val').innerText = matchObj.rate.toFixed(matchObj.id.includes("JPY") ? 3 : 5);
+                    const isBuy = currentActiveSignal.direction === "BUY";
+                    const estTP = isBuy ? (matchObj.rate + diffScale) : (matchObj.rate - diffScale);
+                    document.getElementById('exit-price-val').innerText = estTP.toFixed(matchObj.id.includes("JPY") ? 3 : 5);
+                }
+
+            }, 2500);
+        }
+
+        // Render markets sidebar
+        function renderMarkets() {
+            const container = document.getElementById('market-rates-container');
+            container.innerHTML = '';
+
+            const filtered = activeCategory === 'ALL' 
+                ? marketRates 
+                : marketRates.filter(m => m.category === activeCategory);
+
+            filtered.forEach(item => {
+                const isPositive = !item.change.startsWith('-');
+                const isOtc = item.id.includes('OTC');
+                
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center py-2.5 px-1 hover:bg-gray-900/40 rounded-lg transition duration-150 cursor-pointer";
+                row.onclick = () => {
+                    document.getElementById('pair-select').value = item.id;
+                    onPairChange();
+                };
+
+                const changeColor = isPositive ? 'text-wolfGreen' : 'text-wolfRed';
+                const changeIcon = isPositive ? 'fa-caret-up' : 'fa-caret-down';
+                const pairBadgeColor = isOtc ? 'text-cyan-400 bg-cyan-950/40 border border-cyan-800' : 'text-gray-300 bg-gray-900 border border-gray-800';
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold px-2 py-1 rounded font-grotesk tracking-wide ${pairBadgeColor}">
+                            ${item.id}
+                        </span>
+                    </div>
+                    <div class="text-right font-mono text-xs flex items-center gap-3">
+                        <span class="font-extrabold text-white">${item.rate.toFixed(item.id.includes("JPY") || item.id.includes("BTC") ? 2 : 5)}</span>
+                        <span class="font-bold flex items-center gap-1 ${changeColor} w-16 justify-end">
+                            <i class="fa-solid ${changeIcon}"></i>
+                            ${item.change}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Filter tabs selection logic
+        function changeMarketCategory(cat) {
+            activeCategory = cat;
+            
+            // Remove selection class from all tabs
+            ['ALL', 'FOREX', 'OTC', 'OTHER'].forEach(id => {
+                const tab = document.getElementById(`tab-${id}`);
+                tab.className = "text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap text-wolfGray hover:bg-gray-900 transition";
+            });
+
+            // Set select style
+            const activeTab = document.getElementById(`tab-${cat}`);
+            activeTab.className = "text-[11px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap bg-wolfOrange text-white border border-wolfOrange/20 transition";
+
+            renderMarkets();
+            addLog(appLanguage === 'ar' ? `تصفية لوحة الأسعار لرؤية فئة: ${cat}` : `Filtered rates container viewport to category: ${cat}`, "text-gray-400");
+        }
+
+        // Event listener of Dropdown Pair Change
+        function onPairChange() {
+            const pairName = document.getElementById('pair-select').value;
+            addLog(appLanguage === "ar" ? `تحويل المراقبة للزوج: ${pairName}` : `Repositioned focus to asset: ${pairName}`, "text-sky-300");
+        }
+
+        // Core Signal Generator Button Logic
+        function generateSignal() {
+            // Check Activation state
+            if (!isTerminalActivated()) {
+                const hasKey = localStorage.getItem('activeKey');
+                if (hasKey) {
+                    addLog(appLanguage === "ar" ? `❌ فشل الفحص: لقد استهلكت الـ 7 صفقات لليوم! يرجى الانتظار لتجديد الصفقات بعد 24 ساعة.` : `❌ Scan Failed: You have consumed all 7 daily trades! Please wait for the 24-hour auto-reset.`, "text-red-500 font-extrabold");
+                    alert(appLanguage === "ar" ? `⚠️ لقد استهلكت جميع الصفقات الـ 7 المتاحة لليوم! سيتم تجديدها تلقائياً بعد مرور 24 ساعة من تاريخ التنشيط/التجديد الأخير.` : "⚠️ Daily limit reached! Your 7 trades will auto-renew 24 hours after your last activation or reset.");
+                } else {
+                    addLog(appLanguage === "ar" ? `❌ فشل الفحص: لا يوجد مفتاح تنشيط مفعل للمحطة! يرجى التنشيط أولاً.` : `❌ Scan Failed: No active license key for this terminal! Please activate first.`, "text-red-500 font-extrabold");
+                    alert(appLanguage === "ar" ? "⚠️ محطة التحليل مقفلة! يرجى إدخال مفتاح تنشيط صالح متبقٍ به صفقات للبدء ببث الإشارات المتقدمة." : "⚠️ Terminal license locked! Please enter a valid activation key with remaining trades to generate premium insights.");
+                }
+                
+                // Highlight and focus the activation key field
+                const actCard = document.getElementById('activation-card');
+                actCard.classList.add('border-red-500/80', 'glow-red');
+                setTimeout(() => {
+                    actCard.classList.remove('border-red-500/80', 'glow-red');
+                }, 2000);
+                const inputField = document.getElementById('activation-input');
+                if (inputField) inputField.focus();
+                return;
+            }
+
+            const btn = document.getElementById('btn-generate');
+            const ldr = document.getElementById('loading-state');
+            const box = document.getElementById('signal-box');
+            const fill = document.getElementById('progress-bar-fill');
+
+            const selectedPair = document.getElementById('pair-select').value;
+            const selectedTimeframe = document.getElementById('timeframe-select').value;
+            const selectedStrategy = document.getElementById('strategy-select').value;
+
+            // Trigger Loading overlay animation state
+            btn.classList.add('opacity-50', 'pointer-events-none');
+            box.classList.add('opacity-40', 'pointer-events-none');
+            ldr.classList.remove('hidden');
+
+            addLog(appLanguage === "ar" ? `تحليل الخواص الرياضية لـ ${selectedPair} على استراتيجية ${selectedStrategy}...` : `Evaluating fractional models of ${selectedPair} using ${selectedStrategy}...`, "text-yellow-400");
+            
+            let percentageFilled = 0;
+            fill.style.width = '0%';
+
+            const interval = setInterval(() => {
+                percentageFilled += 12;
+                if (percentageFilled > 100) percentageFilled = 100;
+                fill.style.width = percentageFilled + '%';
+
+                if (Math.random() > 0.4) {
+                    addLog(appLanguage === "ar" ? `رصد شموع الاتجاه ونقاط الدعم اللحظية للزوج...` : `Checking support grids and candle volume factors...`, "text-gray-500");
+                }
+            }, 300);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                
+                // Hide and restore visibility
+                ldr.classList.add('hidden');
+                btn.classList.remove('opacity-50', 'pointer-events-none');
+                box.classList.remove('opacity-40', 'pointer-events-none');
+
+                // Compute fresh random signal state indicators
+                const isBuy = Math.random() > 0.45;
+                const matchObj = marketRates.find(m => m.id === selectedPair) || { rate: 1.08542 };
+                const rateBase = matchObj.rate;
+                const devFactor = selectedPair.includes("OTC") ? 0.00015 : 0.00010;
+
+                const generatedSuccessRate = Math.floor(Math.random() * 11) + 88; // 88% - 98%
+                
+                // Setup current active signal object in app
+                let strengthLevelText = "";
+                let rsiLabel = "";
+                let macdLabel = "";
+                let bollingerLabel = "";
+                let sarLabel = "";
+
+                if (isBuy) {
+                    rsiLabel = appLanguage === "ar" ? `شراء مفرط (${(Math.random() * 15 + 20).toFixed(1)})` : `Oversold (${(Math.random() * 15 + 20).toFixed(1)})`;
+                    macdLabel = appLanguage === "ar" ? "تقاطع ذهبي صاعد" : "Golden Bulish Cross";
+                    bollingerLabel = appLanguage === "ar" ? "ارتداد من الحد الأسفل" : "Lower Bollinger Bounce";
+                    sarLabel = appLanguage === "ar" ? "نقاط الدعم أسفل الشموع" : "Support nodes below candle";
+                } else {
+                    rsiLabel = appLanguage === "ar" ? `بيع مفرط (${(Math.random() * 15 + 65).toFixed(1)})` : `Overbought (${(Math.random() * 15 + 65).toFixed(1)})`;
+                    macdLabel = appLanguage === "ar" ? "تقاطع سلبي هابط" : "Death Bearish Cross";
+                    bollingerLabel = appLanguage === "ar" ? "ارتداد من الحد الأعلى" : "Upper Bollinger Peak";
+                    sarLabel = appLanguage === "ar" ? "نقاط المقاومة على الشموع" : "Resistance nodes on candle";
+                }
+
+                currentActiveSignal = {
+                    pair: selectedPair,
+                    direction: isBuy ? "BUY" : "SELL",
+                    entryPrice: rateBase,
+                    exitPrice: isBuy ? (rateBase + devFactor) : (rateBase - devFactor),
+                    strength: generatedSuccessRate,
+                    rsi: rsiLabel,
+                    macd: macdLabel,
+                    bollinger: bollingerLabel,
+                    sar: sarLabel
+                };
+
+                // Decrement allowed signals
+                let currentTrades = parseInt(localStorage.getItem('remainingTrades') || '0', 10);
+                currentTrades = Math.max(0, currentTrades - 1);
+                localStorage.setItem('remainingTrades', currentTrades);
+
+                const activeKey = localStorage.getItem('activeKey');
+                if (activeKey) {
+                    decrementAdminKeyTrades(activeKey);
+                }
+
+                updateActivationUIStatus();
+
+                refreshActiveSignalCard();
+
+                // Detailed logs printouts
+                addLog(appLanguage === "ar" ? `🐺 تم توليد الإشارة بنجاح لقناة البث بنسبة دقة ${generatedSuccessRate}%` : `🐺 Deep wolf radical signal generated successfully. Accuracy: ${generatedSuccessRate}%`, "text-wolfGreen font-black");
+                addLog(appLanguage === "ar" ? `تحليل: ${isBuy ? 'صعود (CALL)' : 'هبوط (PUT)'} بسعر مستهدف ${currentActiveSignal.exitPrice.toFixed(selectedPair.includes('JPY') ? 3 : 5)}` : `Calculated target for ${isBuy ? 'CALL' : 'PUT'} at ${currentActiveSignal.exitPrice.toFixed(selectedPair.includes('JPY') ? 3 : 5)}`, "text-wolfGreen");
+
+                // Check key expiration and lock immediately
+                if (currentTrades <= 0) {
+                    localStorage.setItem('remainingTrades', '0');
+                    addLog(appLanguage === "ar" ? `🔴 تم الوصول للحد الأقصى (7/7 صفقات) لليوم. المحطة مؤمنة لحين التجديد تلقائياً بعد 24 ساعة.` : `🔴 Daily limit reached (7/7 trades used). Terminal secured pending automatic 24-hour reset.`, "text-red-500 font-extrabold");
+                    setTimeout(() => {
+                        updateActivationUIStatus();
+                    }, 50);
+                }
+
+            }, 2600);
+        }
+
+        // Render card content from state dynamically targeting element properties
+        function refreshActiveSignalCard() {
+            const sig = currentActiveSignal;
+            const pack = translations[appLanguage];
+            const isOtc = sig.pair.includes("OTC");
+
+            // Setup Badge
+            const badgeGlow = document.getElementById('signal-badge-glow');
+            badgeGlow.innerText = sig.pair.replace(" OTC", "");
+            
+            if (isOtc) {
+                badgeGlow.className = "w-10 h-10 rounded-xl bg-cyan-950/20 border border-cyan-800 text-cyan-400 flex items-center justify-center font-black glow-cyan uppercase text-md font-grotesk tracking-wider";
+                document.getElementById('otc-alert-badge').classList.remove('hidden');
+                document.getElementById('verified-badge-container').className = "bg-cyan-950/40 border border-cyan-800/60 text-cyan-400 px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-sm";
+                document.getElementById('verified-badge-text').innerText = pack.otc;
+            } else {
+                badgeGlow.className = "w-10 h-10 rounded-xl bg-wolfOrange/10 border border-wolfOrange/30 text-wolfOrange flex items-center justify-center font-black glow-orange uppercase text-md font-grotesk tracking-wider";
+                document.getElementById('otc-alert-badge').classList.add('hidden');
+                document.getElementById('verified-badge-container').className = "bg-gradient-to-r from-orange-950/40 to-orange-900/40 border border-orange-800/60 text-wolfOrange px-3 py-1.5 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-sm";
+                document.getElementById('verified-badge-text').innerText = appLanguage === "ar" ? "تحليل TradingView 📈" : "TradingView Live 📈";
+            }
+
+            document.getElementById('signal-pair-name').innerText = sig.pair;
+            document.getElementById('curr-timeframe-label').innerText = (appLanguage === "ar" ? "فريم التحليل: " : "Analysis Frame: ") + document.getElementById('timeframe-select').value;
+
+            // Directives Arrow details
+            const arrowBg = document.getElementById('direction-arrow-bg');
+            const arrowIcon = document.getElementById('direction-arrow-icon');
+            const dirLabel = document.getElementById('direction-lbl');
+            const dirTimeLabel = document.getElementById('direction-time-lbl');
+            const strengthPct = document.getElementById('strength-percentage');
+            const strengthLbl = document.getElementById('strength-lbl');
+
+            strengthPct.innerText = sig.strength + "%";
+            dirTimeLabel.innerText = pack.expireText;
+
+            if (sig.direction === "BUY") {
+                arrowBg.className = "w-16 h-16 rounded-xl bg-wolfGreen/10 border border-wolfGreen/30 text-wolfGreen flex items-center justify-center glow-green";
+                arrowIcon.className = "fa-solid fa-arrow-trend-up text-3xl animate-bounce";
+                dirLabel.innerText = pack.buy;
+                dirLabel.className = "text-2xl md:text-3xl font-black text-wolfGreen tracking-wider font-cairo block";
+                strengthPct.className = "text-xl md:text-2xl font-black font-grotesk text-wolfGreen";
+                strengthLbl.className = "text-[9px] text-wolfGreen font-semibold px-1 rounded bg-wolfGreen/15 border border-wolfGreen/20";
+                strengthLbl.innerText = pack.strengthVeryHigh;
+            } else {
+                arrowBg.className = "w-16 h-16 rounded-xl bg-wolfRed/10 border border-wolfRed/30 text-wolfRed flex items-center justify-center glow-red";
+                arrowIcon.className = "fa-solid fa-arrow-trend-down text-3xl animate-bounce";
+                dirLabel.innerText = pack.sell;
+                dirLabel.className = "text-2xl md:text-3xl font-black text-wolfRed tracking-wider font-cairo block";
+                strengthPct.className = "text-xl md:text-2xl font-black font-grotesk text-wolfRed";
+                strengthLbl.className = "text-[9px] text-wolfRed font-semibold px-1 rounded bg-wolfRed/15 border border-wolfRed/20";
+                strengthLbl.innerText = pack.strengthVeryHigh;
+            }
+
+            // Entry Exit numbers
+            document.getElementById('entry-price-val').innerText = sig.entryPrice.toFixed(sig.pair.includes('JPY') ? 3 : 5);
+            document.getElementById('exit-price-val').innerText = sig.exitPrice.toFixed(sig.pair.includes('JPY') ? 3 : 5);
+
+            // Sub Indicator tables
+            document.getElementById('rsi-val').innerText = sig.rsi;
+            document.getElementById('macd-val').innerText = sig.macd;
+            document.getElementById('bollinger-val').innerText = sig.bollinger;
+            document.getElementById('sar-val').innerText = sig.sar;
+
+            // Notice text check
+            document.getElementById('disclaimer-text').innerText = isOtc
+                ? pack.disclaimer
+                : (appLanguage === "ar" 
+                    ? "✨ سعر الدخول متزامن ومطابق تماماً لنفس اللحظة لأسعار منصة التحليل العالمية TradingView لضمان أقصى درجات الدقة وتفادي الانزلاق السعري." 
+                    : "✨ Entry price aligns with live TradingView global feed to prevent price slippage.");
+        }
+
+        // Licensing Logic & States
+        function getSignatureForPart(part1) {
+            let val = 2026;
+            for (let i = 0; i < part1.length; i++) {
+                val = (val * 31 + part1.charCodeAt(i)) % 8999;
+            }
+            return (1000 + val).toString();
+        }
+
+        function checkKeyValidity(keyVal) {
+            const cleanKey = keyVal.trim().toUpperCase();
+            if (!cleanKey) return null;
+
+            // 1. Check system keys
+            const systemKeys = ['WOLF-7777-KING', 'WOLF-2026-VIPS'];
+            if (systemKeys.includes(cleanKey)) {
+                return { key: cleanKey, remaining: 7, created: 'SYSTEM' };
+            }
+
+            // 2. Parse format WOLF-XXXX-YYYY
+            const parts = cleanKey.split('-');
+            if (parts.length === 3 && parts[0] === 'WOLF') {
+                const part1 = parts[1];
+                const part2 = parts[2];
+                // Check if part1 is 4 letters and part2 is 4 digits
+                if (/^[A-Z]{4}$/.test(part1) && /^[0-9]{4}$/.test(part2)) {
+                    if (getSignatureForPart(part1) === part2) {
+                        return { key: cleanKey, remaining: 7, created: 'ALGORITHMIC' };
+                    }
+                }
+            }
+            return null;
+        }
+
+        function initializeDefaultKeys() {
+            if (!localStorage.getItem('adminKeys')) {
+                const defaultKeys = [
+                    { key: 'WOLF-7777-KING', remaining: 7, created: 'SYSTEM' },
+                    { key: 'WOLF-2026-VIPS', remaining: 7, created: 'SYSTEM' }
+                ];
+                localStorage.setItem('adminKeys', JSON.stringify(defaultKeys));
+            }
+        }
+
+        function checkAndResetDailyTrades() {
+            const activeKey = localStorage.getItem('activeKey');
+            if (!activeKey) return;
+
+            let lastReset = parseInt(localStorage.getItem('keyLastResetTime') || '0', 10);
+            const now = Date.now();
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+
+            if (!lastReset) {
+                localStorage.setItem('keyLastResetTime', now.toString());
+                return;
+            }
+
+            if (now - lastReset >= twentyFourHours) {
+                localStorage.setItem('remainingTrades', '7');
+                localStorage.setItem('keyLastResetTime', now.toString());
+                
+                // Update local list if it exists
+                let adminKeysList = [];
+                try {
+                    adminKeysList = JSON.parse(localStorage.getItem('adminKeys') || '[]');
+                } catch(e) {}
+                const found = adminKeysList.find(k => k.key.toUpperCase() === activeKey.toUpperCase());
+                if (found) {
+                    found.remaining = 7;
+                    localStorage.setItem('adminKeys', JSON.stringify(adminKeysList));
+                }
+
+                addLog(appLanguage === "ar" 
+                    ? `🔄 تم تجديد الصفقات اليومية السبع (7) للمفتاح الفعال تلقائياً للأربعة وعشرين ساعة القادمة.` 
+                    : `🔄 Automated 24-hour cycle: Your 7 daily trades have been successfully renewed.`,
+                    "text-wolfGreen font-bold"
+                );
+            }
+        }
+
+        function getDailyResetCountdown() {
+            let lastReset = parseInt(localStorage.getItem('keyLastResetTime') || '0', 10);
+            if (!lastReset) return "24:00:00";
+            const now = Date.now();
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            const elapsed = now - lastReset;
+            const timeRemaining = twentyFourHours - elapsed;
+            if (timeRemaining <= 0) return "00:00:00";
+
+            const hours = Math.floor(timeRemaining / (60 * 60 * 1000));
+            const minutes = Math.floor((timeRemaining % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((timeRemaining % (60 * 1000)) / 1000);
+
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        function isTerminalActivated() {
+            checkAndResetDailyTrades();
+            const key = localStorage.getItem('activeKey');
+            const trades = parseInt(localStorage.getItem('remainingTrades') || '0', 10);
+            return (key && trades > 0);
+        }
+
+        function updateActivationUIStatus() {
+            checkAndResetDailyTrades();
+            
+            const pack = translations[appLanguage];
+            const key = localStorage.getItem('activeKey') || '';
+            const trades = parseInt(localStorage.getItem('remainingTrades') || '0', 10);
+
+            const dot = document.getElementById('activation-dot');
+            const title = document.getElementById('activation-status-title');
+            const badge = document.getElementById('activation-counter-badge');
+            const form = document.getElementById('activation-form');
+            const details = document.getElementById('activation-active-details');
+            const activeKeyDisp = document.getElementById('active-key-display');
+            
+            const availableDiv = document.getElementById('active-state-available');
+            const lockedDiv = document.getElementById('active-state-locked');
+            const countdownSpan = document.getElementById('reset-countdown');
+
+            // English/Arabic static text update in custom elements
+            const activeKeyLbl = document.getElementById('lbl-active-key');
+            if (activeKeyLbl) {
+                activeKeyLbl.innerText = appLanguage === "ar" ? "المفتاح النشط:" : "Active Key:";
+            }
+            const deactivateBtnLbl = document.getElementById('btn-deactivate-lbl');
+            if (deactivateBtnLbl) {
+                deactivateBtnLbl.innerText = appLanguage === "ar" ? "تغيير المفتاح" : "Change Key";
+            }
+            
+            const activeMessageSpan = document.getElementById('activation-active-message');
+            if (activeMessageSpan) {
+                activeMessageSpan.innerText = appLanguage === "ar" 
+                    ? `تم تنشيط المفتاح بنجاح! مسموح بتوليد ${trades} صفقات متبقية لليوم.` 
+                    : `Activated successfully! Allowed to generate ${trades} remaining trades today.`;
+            }
+            
+            const lockedMessageSpan = document.getElementById('activation-locked-message');
+            if (lockedMessageSpan) {
+                lockedMessageSpan.innerText = appLanguage === "ar" 
+                    ? "انتهى الحد اليومي (0/7 صفقات). يتجدد تلقائياً بعد:" 
+                    : "Daily limit reached (0/7 trades). Resets in:";
+            }
+
+            if (key) {
+                form.classList.add('hidden');
+                details.classList.remove('hidden');
+                activeKeyDisp.innerText = key;
+
+                if (trades > 0) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-wolfGreen animate-pulse shadow-sm";
+                    title.innerText = pack.activationActiveTitle;
+                    title.className = "text-xs font-black text-wolfGreen";
+                    
+                    badge.className = "bg-wolfGreen/10 border border-wolfGreen/30 text-wolfGreen text-[10px] px-2.5 py-1 rounded-full font-bold";
+                    badge.innerText = pack.activationRemaining.replace('{x}', trades);
+
+                    availableDiv.classList.remove('hidden');
+                    lockedDiv.classList.add('hidden');
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-wolfRed animate-pulse shadow-sm";
+                    title.innerText = pack.activationExpiredTitle;
+                    title.className = "text-xs font-black text-wolfRed animate-pulse";
+                    
+                    badge.className = "bg-wolfRed/10 border border-wolfRed/30 text-wolfRed text-[10px] px-2.5 py-1 rounded-full font-bold";
+                    badge.innerText = pack.activationRemaining.replace('{x}', 0);
+
+                    availableDiv.classList.add('hidden');
+                    lockedDiv.classList.remove('hidden');
+                    if (countdownSpan) {
+                        countdownSpan.innerText = getDailyResetCountdown();
+                    }
+                }
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-wolfRed shadow-sm";
+                title.innerText = pack.activationLockedTitle;
+                title.className = "text-xs font-bold text-wolfGray";
+                
+                badge.className = "bg-wolfRed/10 border border-wolfRed/30 text-wolfRed text-[10px] px-2.5 py-1 rounded-full font-bold";
+                badge.innerText = pack.activationRemaining.replace('{x}', 0);
+
+                form.classList.remove('hidden');
+                details.classList.add('hidden');
+                document.getElementById('activation-input').placeholder = pack.activationPlaceholder;
+            }
+        }
+
+        function activateTerminal() {
+            const inputField = document.getElementById('activation-input');
+            const inputVal = inputField.value.trim().toUpperCase();
+
+            if (!inputVal) {
+                alert(appLanguage === "ar" ? "⚠️ الرجاء إدخال مفتاح التنشيط أولاً!" : "⚠️ Please enter an activation key first!");
+                return;
+            }
+
+            let adminKeysList = [];
+            try {
+                adminKeysList = JSON.parse(localStorage.getItem('adminKeys') || '[]');
+            } catch(e) {
+                adminKeysList = [];
+            }
+
+            let foundKey = adminKeysList.find(k => k.key.toUpperCase() === inputVal);
+
+            if (!foundKey) {
+                const algoKey = checkKeyValidity(inputVal);
+                if (algoKey) {
+                    adminKeysList.push(algoKey);
+                    localStorage.setItem('adminKeys', JSON.stringify(adminKeysList));
+                    foundKey = algoKey;
+                }
+            }
+
+            if (!foundKey) {
+                alert(appLanguage === "ar" ? "❌ مفتاح تنشيط خاطئ أو غير مصرح به! يرجى التحقق منه وتجربة الرمز الصحيح." : "❌ Invalid or unauthorized activation key! Please verify and enter a correct key.");
+                inputField.classList.add('border-red-500');
+                setTimeout(() => inputField.classList.remove('border-red-500'), 1500);
+                return;
+            }
+
+            localStorage.setItem('activeKey', foundKey.key);
+            localStorage.setItem('remainingTrades', '7');
+            localStorage.setItem('keyLastResetTime', Date.now().toString());
+
+            updateActivationUIStatus();
+            inputField.value = '';
+
+            addLog(appLanguage === "ar" ? `✅ تم تنشيط محطة التداول بنجاح عبر الرمز ${foundKey.key} مسموح بـ 7 صفقات يومياً.` : `✅ Terminal successfully licensed with key ${foundKey.key} (7 daily trades).`, "text-wolfGreen font-extrabold shadow-sm");
+            alert(appLanguage === "ar" ? `🎉 تم التنشيط بنجاح! لديك 7 صفقات متاحة للتوليد وسيتم تجديدها تلقائياً كل 24 ساعة.` : `🎉 Activated successfully! You have 7 trades available to generate, which will auto-renew every 24 hours.`);
+        }
+
+        function deactivateTerminal() {
+            if (confirm(appLanguage === "ar" ? "⚠️ هل تريد إلغاء تنشيط المفتاح الحالي والعودة لصفحة التنشيط؟" : "⚠️ Do you want to deactivate the current key and return to the activation screen?")) {
+                localStorage.removeItem('activeKey');
+                localStorage.removeItem('remainingTrades');
+                localStorage.removeItem('keyLastResetTime');
+                updateActivationUIStatus();
+                addLog(appLanguage === "ar" ? "🔓 تم إلغاء تنشيط المحطة الحالية بنجاح." : "🔓 Terminal deactivated successfully.", "text-wolfOrange font-bold");
+            }
+        }
+
+        function decrementAdminKeyTrades(keyStr) {
+            let adminKeysList = [];
+            try {
+                adminKeysList = JSON.parse(localStorage.getItem('adminKeys') || '[]');
+            } catch(e) {
+                adminKeysList = [];
+            }
+            const found = adminKeysList.find(k => k.key.toUpperCase() === keyStr.toUpperCase());
+            if (found) {
+                found.remaining = Math.max(0, found.remaining - 1);
+                localStorage.setItem('adminKeys', JSON.stringify(adminKeysList));
+            }
+        }
+
+        // Admin Panel Actions
+        function openAdminModal() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+            // Show auth phase, hide control phase
+            document.getElementById('admin-auth-phase').classList.remove('hidden');
+            document.getElementById('admin-control-phase').classList.add('hidden');
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('admin-auth-error').classList.add('hidden');
+            document.getElementById('admin-password-input').focus();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function checkAdminPassword() {
+            const passInput = document.getElementById('admin-password-input').value;
+            const errorText = document.getElementById('admin-auth-error');
+
+            if (passInput === "TURKI2000") {
+                errorText.classList.add('hidden');
+                document.getElementById('admin-auth-phase').classList.add('hidden');
+                document.getElementById('admin-control-phase').classList.remove('hidden');
+                renderAdminKeys();
+                addLog(appLanguage === "ar" ? "⚙️ مخول: تم الوصول للوحة الإدارة بنجاح." : "⚙️ Authorized: Admin Control Panel unlocked.", "text-red-500 font-extrabold");
+            } else {
+                errorText.innerText = appLanguage === "ar" ? "❌ رمز المرور خاطئ! يرجى إدخال الباسورد الصحيح لمدير المنصة." : "❌ Incorrect passcode! Please input correct manager credentials.";
+                errorText.classList.remove('hidden');
+                document.getElementById('admin-password-input').classList.add('border-red-500');
+                setTimeout(() => document.getElementById('admin-password-input').classList.remove('border-red-500'), 1500);
+            }
+        }
+
+        function generateNewKey() {
+            // WOLF-XXXX-YYYY
+            const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ"; 
+            
+            let part1 = '';
+            for (let i = 0; i < 4; i++) {
+                part1 += letters.charAt(Math.floor(Math.random() * letters.length));
+            }
+            
+            // Generate part2 algorithmically!
+            const part2 = getSignatureForPart(part1);
+
+            const generatedKey = `WOLF-${part1}-${part2}`;
+
+            let adminKeysList = [];
+            try {
+                adminKeysList = JSON.parse(localStorage.getItem('adminKeys') || '[]');
+            } catch(e) {
+                adminKeysList = [];
+            }
+
+            adminKeysList.unshift({
+                key: generatedKey,
+                remaining: 7,
+                created: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            });
+
+            localStorage.setItem('adminKeys', JSON.stringify(adminKeysList));
+            renderAdminKeys();
+
+            addLog(appLanguage === "ar" ? `🔑 لوحة الإدارة: تم إصدار مفتاح ترخيص جديد: ${generatedKey}` : `🔑 Admin Console: Generated new activation license: ${generatedKey}`, "text-yellow-400 font-bold");
+        }
+
+        function renderAdminKeys() {
+            const container = document.getElementById('admin-keys-list');
+            container.innerHTML = '';
+
+            let adminKeysList = [];
+            try {
+                adminKeysList = JSON.parse(localStorage.getItem('adminKeys') || '[]');
+            } catch(e) {
+                adminKeysList = [];
+            }
+
+            if (adminKeysList.length === 0) {
+                const emptyRow = document.createElement('div');
+                emptyRow.className = "text-center py-6 text-xs text-wolfGray";
+                emptyRow.innerText = appLanguage === "ar" ? "لا توجد مفاتيح تنشيط حالياً. يرجى الضغط على توليد للمفاتيح المضمونة." : "No activation keys available. Press Generate to issue new keys.";
+                container.appendChild(emptyRow);
+                return;
+            }
+
+            adminKeysList.forEach(item => {
+                const row = document.createElement('div');
+                row.className = "flex justify-between items-center py-3 px-1 border-b border-gray-850/60 transition";
+
+                const isExpired = item.remaining <= 0;
+                const statusColor = isExpired ? "text-red-500 shadow-sm" : "text-wolfGreen shadow-sm";
+                const statusBg = isExpired ? "bg-red-950/20 border border-red-900/60" : "bg-wolfGreen/10 border border-wolfGreen/30";
+                const badgeText = appLanguage === "ar" 
+                    ? (isExpired ? "منتهي (0)" : `نشط (${item.remaining} صفقات)`) 
+                    : (isExpired ? "Expired (0)" : `Active (${item.remaining} trades)`);
+
+                row.innerHTML = `
+                    <div class="flex flex-col gap-0.5 text-left">
+                        <span class="font-mono font-black text-xs text-white tracking-widest uppercase select-all">${item.key}</span>
+                        <span class="text-[9px] text-wolfGray font-mono">تاريخ الإصدار: ${item.created}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor} ${statusBg}">
+                            ${badgeText}
+                        </span>
+                        <button onclick="copyToClipboard('${item.key}')" class="w-7 h-7 bg-gray-900 border border-gray-850 rounded-lg text-wolfGray hover:text-wolfOrange hover:border-wolfOrange transition flex items-center justify-center text-[11px]" title="نسخ المفتاح">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function clearAllKeys() {
+            if (confirm(appLanguage === "ar" ? "⚠️ هل أنت متأكد من رغبتك في حذف سجل مفاتيح التنشيط المصدرة بالكامل؟" : "⚠️ Are you sure you want to completely delete all issued activation keys?")) {
+                localStorage.removeItem('adminKeys');
+                renderAdminKeys();
+                addLog(appLanguage === "ar" ? "🧹 تم تصفية وحذف سجل مفاتيح الترخيص." : "🧹 Handled: Cleared license key logs.", "text-red-400 font-bold");
+            }
+        }
+
+        function copyToClipboard(keyText) {
+            navigator.clipboard.writeText(keyText).then(() => {
+                alert(appLanguage === "ar" ? `📋 تم نسخ مفتاح التنشيط: ${keyText}` : `📋 Activation key copied: ${keyText}`);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+
+    <!-- Admin Control Panel Modal -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-wolfCard border border-gray-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-900 to-wolfCard border-b border-gray-800 flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-gears text-wolfOrange text-md"></i>
+                    <h3 class="font-bold text-sm" id="admin-modal-title">لوحة الإدارة وتوليد المفاتيح (TURKI2000)</h3>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-gray-850 hover:bg-gray-800 text-wolfGray hover:text-white transition flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Password Verification) -->
+            <div id="admin-auth-phase" class="p-6 space-y-4">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 rounded-full bg-red-950/40 text-red-500 border border-red-800/60 flex items-center justify-center text-base mx-auto glow-red">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h4 class="font-bold text-xs" id="auth-title">منطقة محمية - التحقق من المدير المسؤول</h4>
+                    <p class="text-[11px] text-wolfGray" id="auth-desc">يرجى إدخال رمز المرور لتوليد مفاتيح تنشيط جديدة وإدارة التراخيص</p>
+                </div>
+                <!-- Input field -->
+                <div class="space-y-1.5">
+                    <input id="admin-password-input" type="password" placeholder="أدخل كلمة مرور الإدارة..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-xs text-center text-white placeholder-wolfGray tracking-widest focus:outline-none focus:border-red-500 font-bold" />
+                    <p id="admin-auth-error" class="hidden text-[10px] text-red-500 font-bold text-center"></p>
+                </div>
+                <!-- Submit button -->
+                <button onclick="checkAdminPassword()" class="w-full py-2.5 bg-red-650 hover:bg-red-600 text-white rounded-xl font-bold text-xs transition duration-150 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> تأكيد الكود والدخول
+                </button>
+            </div>
+
+            <!-- Modal Content (Dashboard Generator - Hidden by default) -->
+            <div id="admin-control-phase" class="hidden p-6 space-y-5">
+                <!-- Action row -->
+                <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-4 space-y-3">
+                    <div class="text-xs text-wolfGray font-bold" id="panel-actions-lbl">التحكم في تراخيص الأجهزة المربوطة:</div>
+                    <button onclick="generateNewKey()" class="w-full py-3 bg-gradient-to-r from-wolfOrange to-orange-500 hover:to-wolfOrange text-white rounded-xl font-black text-xs transition shadow-md glow-orange flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-plus text-sm animate-pulse"></i> توليد مفتاح تنشيط جديد (5 صفقات)
+                    </button>
+                </div>
+
+                <!-- Keys Database List -->
+                <div class="space-y-2.5">
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-xs text-wolfGray font-bold" id="panel-keys-list-lbl">قائمة مفاتيح التنشيط المصدرة ومعدلات التبقي:</span>
+                        <button onclick="clearAllKeys()" class="text-[10px] text-red-450 text-red-400 hover:underline" id="panel-clear-lbl font-semibold">مسح السجل بالكامل</button>
+                    </div>
+
+                    <!-- List list wrapper -->
+                    <div id="admin-keys-list" class="space-y-2 max-h-[180px] overflow-y-auto divide-y divide-gray-800/20 pr-1">
+                        <!-- Dynamic generated keys inject list -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
